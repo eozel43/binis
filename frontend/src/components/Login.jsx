@@ -88,7 +88,7 @@ export function Login({ onLogin }) {
                 </form>
 
                 <div className="pt-4 border-t border-gray-100 dark:border-slate-800 text-center">
-                    <p className="text-xs text-gray-400 dark:text-gray-500">© {new Date().getFullYear()} Kütahya Belediyesi</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">© {new Date().getFullYear()} Kütahya Belediyesi. Tüm Hakları Saklıdır.</p>
                 </div>
             </div>
         </div>
