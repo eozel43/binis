@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 export function TrendChart({ data }) {
     // Data comes in daily format. We need to aggregate it by month for the chart.
-    const monthlyData = React.useMemo(() => {
-        if (!data) return [];
+    const { chartData, averageChange } = React.useMemo(() => {
+        if (!data || data.length === 0) return { chartData: [], averageChange: 0 };
 
         const aggregated = {};
 
@@ -22,6 +23,8 @@ export function TrendChart({ data }) {
         // Convert back to array and sort
         const sortedData = Object.values(aggregated).sort((a, b) => new Date(a.date) - new Date(b.date));
 
+        let slope = 0;
+
         if (sortedData.length > 1) {
             const n = sortedData.length;
             let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
@@ -33,26 +36,45 @@ export function TrendChart({ data }) {
                 sumXX += i * i;
             }
 
-            const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+            slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
             const intercept = (sumY - slope * sumX) / n;
 
-            return sortedData.map((d, i) => ({
+            const finalData = sortedData.map((d, i) => ({
                 ...d,
                 trend: slope * i + intercept
             }));
+
+            return { chartData: finalData, averageChange: slope };
         }
-        return sortedData;
+
+        return { chartData: sortedData, averageChange: 0 };
     }, [data]);
+
+    const isPositive = averageChange >= 0;
+    const absChange = Math.abs(averageChange);
 
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow flex flex-col h-[400px]">
-            <div className="p-6 pb-4 flex flex-col space-y-1.5 shrink-0">
-                <h3 className="font-semibold leading-none tracking-tight">Aylık Biniş Trendi</h3>
-                <p className="text-sm text-muted-foreground">Ay bazında toplam biniş ve trend analizi</p>
+            <div className="p-6 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0">
+                <div className="space-y-1.5">
+                    <h3 className="font-semibold leading-none tracking-tight">Aylık Biniş Trendi</h3>
+                    <p className="text-sm text-muted-foreground">Ay bazında toplam biniş ve ortalama trend değişimi analizi</p>
+                </div>
+                {chartData.length > 1 && (
+                    <div
+                        className={`mt-2 md:mt-0 flex items-center space-x-2 px-3 py-1.5 rounded-full border cursor-help transition-opacity hover:opacity-80 ${isPositive ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-900/30' : 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30'}`}
+                        title="Formül: slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX)"
+                    >
+                        {isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                        <span className="text-sm font-semibold">
+                            {isPositive ? '+' : '-'} {new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(absChange)} <span className="text-xs font-normal opacity-75">ort. biniş/ay</span>
+                        </span>
+                    </div>
+                )}
             </div>
             <div className="p-0 flex-1 min-h-0 pl-2 pr-4">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={monthlyData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
                         <XAxis
                             dataKey="date"
@@ -70,10 +92,10 @@ export function TrendChart({ data }) {
                             tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
                         />
                         <Tooltip
-                            contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc' }}
+                            contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc', borderRadius: '8px' }}
                             itemStyle={{ color: '#f8fafc' }}
                             labelFormatter={(value) => new Date(value).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long' })}
-                            formatter={(value, name) => [new Intl.NumberFormat('tr-TR').format(value), name === 'trend' ? 'Trend' : 'Biniş']}
+                            formatter={(value, name) => [new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0 }).format(value), name === 'trend' ? 'Trend' : 'Biniş']}
                         />
                         <Legend />
                         <Line type="monotone" dataKey="boardings" name="Biniş" stroke="#3b82f6" strokeWidth={2} dot={true} activeDot={{ r: 6 }} />

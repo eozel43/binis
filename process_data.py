@@ -9,31 +9,11 @@ INPUT_FILE = "binişler_tum.xlsx"
 OUTPUT_DIR = "frontend/public/data"
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "dashboard_data.json")
 
-def process_data():
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-
-    print(f"Loading {INPUT_FILE}...")
-    try:
-        df = pd.read_excel(INPUT_FILE)
-    except FileNotFoundError:
-        print(f"Error: {INPUT_FILE} not found.")
-        return
-
-    print("Processing data...")
-    
-    # Ensure Date is datetime
-    df['Tarih'] = pd.to_datetime(df['Tarih'])
-    
-    # --- Filter Options ---
-    # Extract unique values for filter dropdowns
-    routes = sorted(df['Uzun Hat Adı'].unique().tolist())
-    clusters = sorted(df['Kart Tipi Kümelenmiş'].dropna().unique().tolist())
-    types = sorted(df['Ücretli/Ucretsiz kart'].dropna().unique().tolist())
-
-    # --- Grouped Data for Frontend Filtering ---
-    # Instead of sending every single row (which might be too large), we group by the filterable dimensions + Date
-    # Columns to group by: Date, Route, Cluster, Type
+def group_and_transform_data(df):
+    """
+    Groups the raw dataframe by selected dimensions and applies aggregation logic.
+    Made separate for testability.
+    """
     grouped = df.groupby([
         df['Tarih'].dt.strftime('%Y-%m-%d'), 
         'Uzun Hat Adı', 
@@ -65,6 +45,33 @@ def process_data():
     
     # Drop unnecessary columns after combining
     grouped = grouped.drop(columns=['uni1', 'uni2', 'kredi', 'nfc'])
+    
+    return grouped
+
+def process_data():
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
+
+    print(f"Loading {INPUT_FILE}...")
+    try:
+        df = pd.read_excel(INPUT_FILE)
+    except FileNotFoundError:
+        print(f"Error: {INPUT_FILE} not found.")
+        return
+
+    print("Processing data...")
+    
+    # Ensure Date is datetime
+    df['Tarih'] = pd.to_datetime(df['Tarih'])
+    
+    # --- Filter Options ---
+    # Extract unique values for filter dropdowns
+    routes = sorted(df['Uzun Hat Adı'].unique().tolist())
+    clusters = sorted(df['Kart Tipi Kümelenmiş'].dropna().unique().tolist())
+    types = sorted(df['Ücretli/Ucretsiz kart'].dropna().unique().tolist())
+
+    # --- Grouped Data for Frontend Filtering ---
+    grouped = group_and_transform_data(df)
 
     # --- Construct Final JSON ---
     dashboard_data = {
