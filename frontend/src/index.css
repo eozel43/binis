@@ -80,3 +80,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Sayfa yazdırılmasını gizlemek/engellemek için */
+@media print {
+  body {
+    display: none !important;
+  }
+}

@@ -36,6 +36,22 @@ function App() {
                 console.error("Error loading data:", err);
                 setLoading(false);
             });
+
+        // Print Screen prevention
+        const handleKeyUp = (e) => {
+            if (e.key === 'PrintScreen') {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText('');
+                }
+                alert('Ekran görüntüsü alınmasına izin verilmiyor.');
+            }
+        };
+
+        window.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            window.removeEventListener('keyup', handleKeyUp);
+        };
     }, []);
 
     const handleFilterChange = (key, value) => {
@@ -47,6 +63,18 @@ function App() {
     };
 
     // --- Dynamic Aggregation Logic ---
+    const lastUpdatedDate = useMemo(() => {
+        if (!rawData || !rawData.records || rawData.records.length === 0) return new Date().toLocaleDateString('tr-TR');
+        // Calculate the maximum date in the records
+        const latestDateStr = rawData.records.reduce((max, r) => (r.date > max ? r.date : max), rawData.records[0].date);
+
+        const maxDate = new Date(latestDateStr);
+        // Add one month and set day to 1 to get the first day of the next month
+        const nextMonthFirstDay = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 1);
+
+        return nextMonthFirstDay.toLocaleDateString('tr-TR');
+    }, [rawData]);
+
     const dashboardData = useMemo(() => {
         if (!rawData) return null;
 
@@ -173,7 +201,7 @@ function App() {
                     <div className="flex items-center gap-4 self-start md:self-auto">
                         <div className="flex items-center space-x-2 bg-card text-card-foreground p-2 rounded-lg border border-border shadow-sm">
                             <span className="text-sm font-medium text-muted-foreground px-2">Son Güncelleme:</span>
-                            <span className="text-sm font-bold text-foreground">{new Date().toLocaleDateString('tr-TR')}</span>
+                            <span className="text-sm font-bold text-foreground">{lastUpdatedDate}</span>
                         </div>
                         <ThemeToggle />
                         <button
@@ -232,6 +260,13 @@ function App() {
                 <div className="grid gap-4 md:grid-cols-1">
                     <RouteTable data={dashboardData.topRoutes} />
                 </div>
+
+                {/* Footer Section */}
+                <footer className="mt-8 pb-4 text-center">
+                    <p className="text-muted-foreground italic text-sm">
+                        Endüstri Yük. Mühendisi Emre ÖZEL
+                    </p>
+                </footer>
             </div>
         </div>
     );
