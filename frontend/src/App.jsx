@@ -25,7 +25,7 @@ function App() {
     });
 
     useEffect(() => {
-        console.log("App Version: v1.2 (KPI Eklendi)"); // Verification Log
+        console.log("App Version: v1.3 (Print Screen & Footer Eklendi)"); // Verification Log
         fetch('/data/dashboard_data.json')
             .then(res => res.json())
             .then(data => {
