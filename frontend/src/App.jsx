@@ -125,7 +125,7 @@ function App() {
             routeMap[r.route].boardings += useFreeColumn ? (r.free || 0) : (r.boardings || 0);
             routeMap[r.route].revenue += useFreeColumn ? 0 : (r.revenue || 0);
         });
-        const topRoutes = Object.values(routeMap).sort((a, b) => b.boardings - a.boardings).slice(0, 10);
+        const topRoutes = Object.values(routeMap).sort((a, b) => b.boardings - a.boardings);
 
         // 4. Prepare Card Types (for pie chart) based on cluster
         const clusterMap = {};

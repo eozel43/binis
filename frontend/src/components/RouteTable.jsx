@@ -5,7 +5,7 @@ export function RouteTable({ data }) {
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow col-span-4 flex flex-col h-[500px]">
             <div className="p-6 pb-4 flex flex-col space-y-1.5 shrink-0">
-                <h3 className="font-semibold leading-none tracking-tight">En Yoğun 10 Hat</h3>
+                <h3 className="font-semibold leading-none tracking-tight">Tüm Hatlar</h3>
                 <p className="text-sm text-muted-foreground">Biniş sayısına göre sıralı</p>
             </div>
             <div className="p-0 flex-1 overflow-hidden">
