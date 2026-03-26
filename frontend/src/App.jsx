@@ -315,7 +315,7 @@ function App() {
 
                 {/* Footer Section */}
                 <footer className="mt-12 pb-8 text-center space-y-4 border-t border-border/50 pt-8">
-                    <p className="text-[11px] text-muted-foreground/60 max-w-4xl mx-auto px-4 leading-relaxed tracking-wide uppercase">
+                    <p className="text-[11px] text-muted-foreground/60 max-w-4xl mx-auto px-4 leading-relaxed">
                         Bu platformda yer alan içerikler, veri güvenliği ve kurumsal kullanım esasları çerçevesinde yalnızca yetkili kullanıcıların erişimine sunulmuştur. İçeriklerin amacı dışında kullanılması, izinsiz paylaşılması, çoğaltılması, üçüncü kişilere aktarılması veya herhangi bir surette kötüye kullanılması yasaktır. Belediyemiz, ilgili mevzuat ve veri güvenliği hükümleri kapsamında tüm hukuki haklarını saklı tutar.
                     </p>
                     <p className="text-muted-foreground italic text-sm font-lexend font-medium">
