@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { LayoutDashboard, Users, CreditCard, Wallet, TrendingUp, LogOut } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { StatsCard } from './components/StatsCard';
 import { TrendChart } from './components/TrendChart';
 import { RouteTable } from './components/RouteTable';
@@ -206,14 +207,22 @@ function App() {
 
 
     return (
-        <div className="min-h-screen bg-background text-foreground p-8 font-sans transition-colors duration-300">
-            <div className="max-w-7xl mx-auto space-y-8">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground p-8 font-sans transition-colors duration-500 selection:bg-blue-500/30">
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="max-w-7xl mx-auto space-y-8"
+            >
 
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-100">Ulaşım Analiz Paneli</h1>
-                        <p className="text-muted-foreground mt-1">Gerçek zamanlı biniş ve hasılat verileri</p>
+                    <div className="space-y-1">
+                        <h1 className="text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-100 font-lexend">Ulaşım Analiz Paneli</h1>
+                        <p className="text-muted-foreground/80 flex items-center gap-2">
+                           <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                           Gerçek zamanlı biniş ve hasılat verileri
+                        </p>
                     </div>
                     <div className="flex items-center gap-4 self-start md:self-auto">
                         <div className="flex items-center space-x-2 bg-card text-card-foreground p-2 rounded-lg border border-border shadow-sm">
@@ -294,15 +303,15 @@ function App() {
                 </div>
 
                 {/* Footer Section */}
-                <footer className="mt-8 pb-4 text-center space-y-4">
-                    <p className="text-[11px] text-muted-foreground/70 max-w-5xl mx-auto px-4 leading-relaxed">
+                <footer className="mt-12 pb-8 text-center space-y-4 border-t border-border/50 pt-8">
+                    <p className="text-[11px] text-muted-foreground/60 max-w-4xl mx-auto px-4 leading-relaxed tracking-wide uppercase">
                         Bu platformda yer alan içerikler, veri güvenliği ve kurumsal kullanım esasları çerçevesinde yalnızca yetkili kullanıcıların erişimine sunulmuştur. İçeriklerin amacı dışında kullanılması, izinsiz paylaşılması, çoğaltılması, üçüncü kişilere aktarılması veya herhangi bir surette kötüye kullanılması yasaktır. Belediyemiz, ilgili mevzuat ve veri güvenliği hükümleri kapsamında tüm hukuki haklarını saklı tutar.
                     </p>
-                    <p className="text-muted-foreground italic text-sm">
+                    <p className="text-muted-foreground italic text-sm font-lexend font-medium">
                         Hazırlayan: Endüstri Yük. Mühendisi Emre ÖZEL
                     </p>
                 </footer>
-            </div>
+            </motion.div>
         </div>
     );
 }
