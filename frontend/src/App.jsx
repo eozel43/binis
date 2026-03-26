@@ -212,7 +212,7 @@ function App() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-foreground">Ulaşım Analiz Paneli</h1>
+                        <h1 className="text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-100">Ulaşım Analiz Paneli</h1>
                         <p className="text-muted-foreground mt-1">Gerçek zamanlı biniş ve hasılat verileri</p>
                     </div>
                     <div className="flex items-center gap-4 self-start md:self-auto">
@@ -299,7 +299,7 @@ function App() {
                         Bu platformda yer alan içerikler, veri güvenliği ve kurumsal kullanım esasları çerçevesinde yalnızca yetkili kullanıcıların erişimine sunulmuştur. İçeriklerin amacı dışında kullanılması, izinsiz paylaşılması, çoğaltılması, üçüncü kişilere aktarılması veya herhangi bir surette kötüye kullanılması yasaktır. Belediyemiz, ilgili mevzuat ve veri güvenliği hükümleri kapsamında tüm hukuki haklarını saklı tutar.
                     </p>
                     <p className="text-muted-foreground italic text-sm">
-                        Endüstri Yük. Mühendisi Emre ÖZEL
+                        Hazırlayan: Endüstri Yük. Mühendisi Emre ÖZEL
                     </p>
                 </footer>
             </div>
