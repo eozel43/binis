@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useMemo } from 'react';
 import { LayoutDashboard, Users, CreditCard, Wallet, TrendingUp, LogOut, Bus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StatsCard } from './components/StatsCard';
