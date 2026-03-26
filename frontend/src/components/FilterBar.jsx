@@ -11,12 +11,13 @@ export function FilterBar({ filters, selected, onChange }) {
     }));
 
     return (
-        <div className="bg-card/50 backdrop-blur-sm border border-border rounded-xl p-5 mb-8 shadow-sm relative z-20">
-            <div className="flex flex-col md:flex-row gap-5 items-end justify-between">
+        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-6 mb-8 shadow-xl relative z-20 overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+            <div className="flex flex-col md:flex-row gap-5 items-end justify-between relative z-10">
 
                 {/* Year Filter */}
                 <div className="w-full md:w-1/6">
-                    <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
+                    <label className="block text-[10px] font-bold text-muted-foreground mb-2 uppercase tracking-widest font-lexend">
                         Yıl ({filters?.years?.length || 0})
                     </label>
                     <MultiSelect
@@ -29,7 +30,7 @@ export function FilterBar({ filters, selected, onChange }) {
 
                 {/* Month Filter */}
                 <div className="w-full md:w-1/6">
-                    <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
+                    <label className="block text-[10px] font-bold text-muted-foreground mb-2 uppercase tracking-widest font-lexend">
                         Ay ({filters?.months?.length || 0})
                     </label>
                     <MultiSelect
@@ -42,7 +43,7 @@ export function FilterBar({ filters, selected, onChange }) {
 
                 {/* Route Filter */}
                 <div className="w-full md:w-1/3">
-                    <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Hat Seçimi</label>
+                    <label className="block text-[10px] font-bold text-muted-foreground mb-2 uppercase tracking-widest font-lexend">Hat Seçimi</label>
                     <MultiSelect
                         options={filters?.routes || []}
                         selected={selected.route}
@@ -53,7 +54,7 @@ export function FilterBar({ filters, selected, onChange }) {
 
                 {/* Cluster Filter */}
                 <div className="w-full md:w-1/4">
-                    <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Kart Grubu</label>
+                    <label className="block text-[10px] font-bold text-muted-foreground mb-2 uppercase tracking-widest font-lexend">Kart Grubu</label>
                     <MultiSelect
                         options={filters?.clusters || []}
                         selected={selected.cluster}
@@ -64,7 +65,7 @@ export function FilterBar({ filters, selected, onChange }) {
 
                 {/* Type Filter */}
                 <div className="w-full md:w-1/4">
-                    <label className="block text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">Biniş Türü</label>
+                    <label className="block text-[10px] font-bold text-muted-foreground mb-2 uppercase tracking-widest font-lexend">Biniş Türü</label>
                     <div className="flex flex-col gap-2">
                         <MultiSelect
                             options={filters?.types || []}

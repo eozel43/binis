@@ -57,7 +57,7 @@ export function TrendChart({ data }) {
         <div className="rounded-xl border bg-card text-card-foreground shadow flex flex-col h-[400px]">
             <div className="p-6 pb-4 flex flex-col md:flex-row justify-between items-start md:items-center shrink-0">
                 <div className="space-y-1.5">
-                    <h3 className="font-semibold leading-none tracking-tight">Aylık Biniş Trendi</h3>
+                    <h3 className="font-semibold leading-none tracking-tight font-lexend">Aylık Biniş Trendi</h3>
                     <p className="text-sm text-muted-foreground">Ay bazında toplam biniş ve ortalama trend değişimi analizi</p>
                 </div>
                 {chartData.length > 1 && (

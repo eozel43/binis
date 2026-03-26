@@ -10,7 +10,7 @@ export function CardTypePie({ data, title = "Kart Tipi Dağılımı", descriptio
     return (
         <div className="rounded-xl border bg-card text-card-foreground shadow flex flex-col h-[450px]">
             <div className="p-6 pb-4 flex flex-col space-y-1.5 shrink-0">
-                <h3 className="font-semibold leading-none tracking-tight">{title}</h3>
+                <h3 className="font-semibold leading-none tracking-tight font-lexend">{title}</h3>
                 <p className="text-sm text-muted-foreground">{description}</p>
             </div>
             <div className="p-0 flex-1 min-h-0">
