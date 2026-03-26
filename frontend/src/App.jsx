@@ -1,6 +1,4 @@
-
-import React, { useEffect, useState, useMemo } from 'react';
-import { LayoutDashboard, Users, CreditCard, Wallet, TrendingUp, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, Wallet, TrendingUp, LogOut, Bus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StatsCard } from './components/StatsCard';
 import { TrendChart } from './components/TrendChart';
@@ -215,14 +213,26 @@ function App() {
                 className="max-w-7xl mx-auto space-y-8"
             >
 
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-bold tracking-tight text-blue-950 dark:text-blue-100 font-lexend">Ulaşım Analiz Paneli</h1>
-                        <p className="text-muted-foreground/80 flex items-center gap-2">
-                           <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                           Gerçek zamanlı biniş ve hasılat verileri
-                        </p>
+                {/* Header with Logotype */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                        {/* Branded Logotype */}
+                        <motion.div 
+                            whileHover={{ rotate: -5, scale: 1.05 }}
+                            className="h-12 w-12 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-white/20"
+                        >
+                            <Bus className="h-7 w-7 text-white" />
+                        </motion.div>
+                        <div className="space-y-0.5">
+                            <h1 className="text-2xl font-black tracking-tight flex items-center gap-1.5 font-lexend uppercase">
+                                <span className="text-blue-600 dark:text-blue-400">BİNİŞ</span>
+                                <span className="text-slate-400 dark:text-slate-600 font-light">PRO</span>
+                            </h1>
+                            <div className="flex items-center gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Ulaşım Analiz Paneli</p>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex items-center gap-4 self-start md:self-auto">
                         <div className="flex items-center space-x-2 bg-card text-card-foreground p-2 rounded-lg border border-border shadow-sm">
