@@ -11,7 +11,7 @@ export function FilterBar({ filters, selected, onChange }) {
     }));
 
     return (
-        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-6 mb-8 shadow-xl relative z-20 overflow-hidden">
+        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-6 mb-8 shadow-xl relative z-20">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
             <div className="flex flex-col md:flex-row gap-5 items-end justify-between relative z-10">
 
