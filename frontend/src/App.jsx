@@ -225,13 +225,13 @@ function App() {
                             <Bus className="h-7 w-7 text-white" />
                         </motion.div>
                         <div className="space-y-0.5">
-                            <h1 className="text-2xl font-black tracking-tight flex items-center gap-1.5 font-lexend uppercase">
-                                <span className="text-blue-600 dark:text-blue-400">BİNİŞ</span>
-                                <span className="text-slate-400 dark:text-slate-600 font-light">PRO</span>
+                            <h1 className="text-xl md:text-2xl font-black tracking-tighter flex flex-wrap items-center gap-x-1.5 font-lexend uppercase leading-none">
+                                <span className="text-blue-600 dark:text-blue-400">ULAŞIM HİZMETLERİ</span>
+                                <span className="text-slate-400 dark:text-slate-600 font-light text-lg md:text-xl">MÜDÜRLÜĞÜ</span>
                             </h1>
                             <div className="flex items-center gap-2">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.2em]">Ulaşım Analiz Paneli</p>
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">Operasyonel Analiz Sistemi</p>
                             </div>
                         </div>
                     </div>
