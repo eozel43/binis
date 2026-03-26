@@ -25,7 +25,7 @@ function App() {
     });
 
     useEffect(() => {
-        console.log("App Version: v1.4 (Şubat 2026 Eklendi)"); // Verification Log
+        console.log("App Version: v1.4 (Ortalama KPI & Yeni Donut Chartlar Eklendi)"); // Verification Log
         fetch('/data/dashboard_data.json')
             .then(res => res.json())
             .then(data => {
@@ -116,6 +116,11 @@ function App() {
         // Revenue should be 0 if we are only looking at free rides
         const totalRevenue = useFreeColumn ? 0 : filteredRecords.reduce((sum, r) => sum + (r.revenue || 0), 0);
         const freeBoardings = filteredRecords.reduce((sum, r) => sum + (r.free || 0), 0);
+        const totalKrediNfc = filteredRecords.reduce((sum, r) => sum + (useFreeColumn ? 0 : (r.kredi_nfc || 0)), 0);
+        const totalAktarma = filteredRecords.reduce((sum, r) => sum + (useFreeColumn ? 0 : (r.aktarma || 0)), 0);
+        
+        const uniqueMonths = new Set(filteredRecords.map(r => r.date.substring(0, 7)));
+        const uniqueMonthsCount = uniqueMonths.size || 1;
 
         // 3. Prepare Top Routes (for table)
         // Group by route name and sum boardings
@@ -160,11 +165,23 @@ function App() {
             boardings: useFreeColumn ? (r.free || 0) : (r.boardings || 0)
         }));
 
+        const krediPieData = [
+            { name: 'Kredi Kartı', value: totalKrediNfc },
+            { name: 'Diğer', value: Math.max(0, totalBoardings - totalKrediNfc) }
+        ].filter(i => i.value > 0);
+
+        const aktarmaPieData = [
+            { name: 'Aktarma', value: totalAktarma },
+            { name: 'Normal Biniş', value: Math.max(0, totalBoardings - totalAktarma) }
+        ].filter(i => i.value > 0);
+
         return {
-            kpi: { totalBoardings, totalRevenue, freeBoardings },
+            kpi: { totalBoardings, totalRevenue, freeBoardings, uniqueMonthsCount },
             topRoutes,
             cardTypes,
             paidFreeTypes,
+            krediPieData,
+            aktarmaPieData,
             trends,
             filters: augmentedFilters
         };
@@ -227,19 +244,19 @@ function App() {
                         title="Toplam Biniş"
                         value={new Intl.NumberFormat('tr-TR').format(dashboardData.kpi.totalBoardings)}
                         icon={Users}
-                        description="Seçilen kriterlere göre toplam"
+                        description={`Aylık Ortalama: ${new Intl.NumberFormat('tr-TR').format(Math.round(dashboardData.kpi.totalBoardings / dashboardData.kpi.uniqueMonthsCount))}`}
                     />
                     <StatsCard
                         title="Toplam Hasılat"
                         value={new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(dashboardData.kpi.totalRevenue)}
                         icon={Wallet}
-                        description="Seçilen kriterlere göre hasılat"
+                        description={`Aylık Ortalama: ${new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 }).format(dashboardData.kpi.totalRevenue / dashboardData.kpi.uniqueMonthsCount)}`}
                     />
                     <StatsCard
                         title="Ücretsiz Binişler"
                         value={new Intl.NumberFormat('tr-TR').format(dashboardData.kpi.freeBoardings)}
                         icon={CreditCard}
-                        description="Toplam ücretsiz geçiş"
+                        description={`Aylık Ortalama: ${new Intl.NumberFormat('tr-TR').format(Math.round(dashboardData.kpi.freeBoardings / dashboardData.kpi.uniqueMonthsCount))}`}
                     />
                 </div>
 
@@ -252,6 +269,21 @@ function App() {
                             data={dashboardData.paidFreeTypes}
                             title="Ücretli / Ücretsiz"
                             description="Ücretli ve ücretsiz biniş oranları"
+                            largeLegend={true}
+                        />
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <CardTypePie
+                            data={dashboardData.krediPieData}
+                            title="Kredi Kartı Biniş Oranı"
+                            description="Kredi Kartlı Biniş / Toplam Biniş"
+                            largeLegend={true}
+                        />
+                        <CardTypePie
+                            data={dashboardData.aktarmaPieData}
+                            title="Aktarma Biniş Oranı"
+                            description="Aktarma / Toplam Biniş"
+                            largeLegend={true}
                         />
                     </div>
                 </div>
@@ -262,7 +294,10 @@ function App() {
                 </div>
 
                 {/* Footer Section */}
-                <footer className="mt-8 pb-4 text-center">
+                <footer className="mt-8 pb-4 text-center space-y-4">
+                    <p className="text-[11px] text-muted-foreground/70 max-w-5xl mx-auto px-4 leading-relaxed">
+                        Bu platformda yer alan içerikler, veri güvenliği ve kurumsal kullanım esasları çerçevesinde yalnızca yetkili kullanıcıların erişimine sunulmuştur. İçeriklerin amacı dışında kullanılması, izinsiz paylaşılması, çoğaltılması, üçüncü kişilere aktarılması veya herhangi bir surette kötüye kullanılması yasaktır. Belediyemiz, ilgili mevzuat ve veri güvenliği hükümleri kapsamında tüm hukuki haklarını saklı tutar.
+                    </p>
                     <p className="text-muted-foreground italic text-sm">
                         Endüstri Yük. Mühendisi Emre ÖZEL
                     </p>
