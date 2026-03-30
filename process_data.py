@@ -23,28 +23,31 @@ def group_and_transform_data(df):
         'Genel Toplam Biniş Adet': 'sum',
         'Genel Toplam Biniş Tutar': 'sum',
         'Ücretsiz Biniş Adet': 'sum',
-        'TAM_16TL': 'sum',
-        'ILKOKUL-LISE(10TL)': 'sum',
-        'UNI_OGRKARTI_15TL': 'sum',
-        'UNI_OGR_8TL': 'sum',
-        'Abonman Biniş Adet': 'sum',
+        'TAM BİNİŞ': 'sum',
+        'BASIN KARTLI BİNİŞ': 'sum',
+        'İLKOKUL-LİSE BİNİŞ': 'sum',
+        'KREDİ KARTI BİNİŞ': 'sum',
+        'NFC-QR BİNİŞ': 'sum',
+        'ÜNİVERSİTE ÖĞRENCİ KARTI': 'sum',
+        'ÜNİVERSİTE ÖĞR. 16 NOLU HAT': 'sum',
+        'ÜNİVERSİTE ÖĞR. İKAMET 16 NOLU HAT': 'sum',
+        'ÜNİVERSİTE ÖĞR. İKAMET KART': 'sum',
         'Aktarma Biniş Adet': 'sum',
-        'KrediKartı_16TL': 'sum',
-        'NFC-QR_20TL': 'sum'
+        'Abonman Biniş Adet': 'sum'
     }).reset_index()
     
     grouped.columns = [
         'date', 'route', 'cluster', 'type', 
         'boardings', 'revenue', 'free', 
-        'tam', 'lise', 'uni1', 'uni2', 'abonman', 'aktarma', 'kredi', 'nfc'
+        'tam', 'basin', 'lise', 'kredi', 'nfc', 'uni_ogrenci', 'uni_16no', 'uni_ikamet_16no', 'uni_ikamet_kart', 'aktarma', 'abonman'
     ]
 
-    # Combine Univ columns for cleaner frontend logic
-    grouped['uni'] = grouped['uni1'] + grouped['uni2']
+    # Combine columns for existing frontend charts/KPIs
+    grouped['uni'] = grouped['uni_ogrenci'] + grouped['uni_16no'] + grouped['uni_ikamet_16no'] + grouped['uni_ikamet_kart']
     grouped['kredi_nfc'] = grouped['kredi'] + grouped['nfc']
+    grouped['uni_ikamet'] = grouped['uni_ikamet_16no'] + grouped['uni_ikamet_kart']
     
-    # Drop unnecessary columns after combining
-    grouped = grouped.drop(columns=['uni1', 'uni2', 'kredi', 'nfc'])
+    return grouped
     
     return grouped
 
