@@ -8,6 +8,8 @@ import { CardTypePie } from './components/CardTypePie';
 import { FilterBar } from './components/FilterBar';
 import { ThemeToggle } from './components/ThemeToggle';
 import { Login } from './components/Login';
+import { SummaryTable } from './components/SummaryTable';
+import { HeatmapChart } from './components/HeatmapChart';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -64,16 +66,9 @@ function App() {
 
     // --- Dynamic Aggregation Logic ---
     const lastUpdatedDate = useMemo(() => {
-        if (!rawData || !rawData.records || rawData.records.length === 0) return new Date().toLocaleDateString('tr-TR');
-        // Calculate the maximum date in the records
-        const latestDateStr = rawData.records.reduce((max, r) => (r.date > max ? r.date : max), rawData.records[0].date);
-
-        const maxDate = new Date(latestDateStr);
-        // Add one month and set day to 1 to get the first day of the next month
-        const nextMonthFirstDay = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 1);
-
-        return nextMonthFirstDay.toLocaleDateString('tr-TR');
-    }, [rawData]);
+        // Return today's date always
+        return new Date().toLocaleDateString('tr-TR');
+    }, []);
 
     const dashboardData = useMemo(() => {
         if (!rawData) return null;
@@ -175,6 +170,48 @@ function App() {
             { name: 'Normal Biniş', value: Math.max(0, totalBoardings - totalAktarma) }
         ].filter(i => i.value > 0);
 
+        // 6. Aggregate Summary Data by Year for the new table
+        const summaryData = {};
+        const heatmapData = {}; // Format: { year: { month1: val, month2: val, ... } }
+        
+        // Initialize maps with all years to ensure layout (grid/table) doesn't collapse on year filter
+        availableYears.forEach(y => { 
+            heatmapData[y] = {}; 
+            summaryData[y] = {
+                tam: 0, basin: 0, lise: 0, kredi: 0, nfc: 0, 
+                uni_ogrenci: 0, uni_16no_all: 0, uni_ikamet: 0, aktarma: 0
+            };
+        });
+
+        filteredRecords.forEach(r => {
+            const year = r.date.substring(0, 4);
+            const month = parseInt(r.date.substring(5, 7), 10);
+            const boardingsCount = useFreeColumn ? (r.free || 0) : (r.boardings || 0);
+
+            // Populate Heatmap Data
+            if (!heatmapData[year]) heatmapData[year] = {};
+            if (!heatmapData[year][month]) heatmapData[year][month] = 0;
+            heatmapData[year][month] += boardingsCount;
+
+            // Populate Summary Table Data
+            if (!summaryData[year]) {
+                summaryData[year] = {
+                    tam: 0, basin: 0, lise: 0, kredi: 0, nfc: 0, 
+                    uni_ogrenci: 0, uni_16no_all: 0, uni_ikamet: 0, aktarma: 0
+                };
+            }
+            // ... the rest of the summaryData assignments remain unchanged
+            summaryData[year].tam += r.tam || 0;
+            summaryData[year].basin += r.basin || 0;
+            summaryData[year].lise += r.lise || 0;
+            summaryData[year].kredi += r.kredi || 0;
+            summaryData[year].nfc += r.nfc || 0;
+            summaryData[year].uni_ogrenci += r.uni_ogrenci || 0;
+            summaryData[year].uni_16no_all += (r.uni_16no || 0) + (r.uni_ikamet_16no || 0);
+            summaryData[year].uni_ikamet += r.uni_ikamet_kart || 0;
+            summaryData[year].aktarma += r.aktarma || 0;
+        });
+
         return {
             kpi: { totalBoardings, totalRevenue, freeBoardings, uniqueMonthsCount },
             topRoutes,
@@ -183,11 +220,11 @@ function App() {
             krediPieData,
             aktarmaPieData,
             trends,
+            summaryData,
+            heatmapData,
             filters: augmentedFilters
         };
-
     }, [rawData, selectedFilters]);
-
 
     if (!isAuthenticated) {
         return <Login onLogin={() => setIsAuthenticated(true)} />;
@@ -206,57 +243,64 @@ function App() {
 
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground p-8 font-sans transition-colors duration-500 selection:bg-blue-500/30">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-foreground font-sans transition-colors duration-500 selection:bg-blue-500/30">
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="max-w-7xl mx-auto space-y-8"
+                className="flex flex-col"
             >
-
-                {/* Header with Logotype */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                        {/* Branded Logotype */}
-                        <motion.div 
-                            whileHover={{ rotate: -5, scale: 1.05 }}
-                            className="h-12 w-12 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-white/20"
-                        >
-                            <Bus className="h-7 w-7 text-white" />
-                        </motion.div>
-                        <div className="space-y-0.5">
-                            <h1 className="text-xl md:text-2xl font-black tracking-tighter flex flex-wrap items-center gap-x-1.5 font-lexend uppercase leading-none">
-                                <span className="text-blue-600 dark:text-blue-400">ULAŞIM HİZMETLERİ</span>
-                                <span className="text-slate-400 dark:text-slate-600 font-light text-lg md:text-xl">MÜDÜRLÜĞÜ</span>
-                            </h1>
-                            <div className="flex items-center gap-2">
-                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">Operasyonel Analiz Sistemi</p>
+                {/* Sticky Header and Filter Section */}
+                <div className="sticky top-0 z-50 w-full bg-slate-50/95 dark:bg-slate-950/95 backdrop-blur-xl border-b border-border/50 pt-6 md:pt-8 pb-2 px-4 md:px-8 shadow-sm">
+                    <div className="max-w-7xl mx-auto space-y-6">
+                        {/* Header with Logotype */}
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <div className="flex items-center gap-4">
+                                {/* Branded Logotype */}
+                                <motion.div 
+                                    whileHover={{ rotate: -5, scale: 1.05 }}
+                                    className="h-12 w-12 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 ring-1 ring-white/20"
+                                >
+                                    <Bus className="h-7 w-7 text-white" />
+                                </motion.div>
+                                <div className="space-y-0.5">
+                                    <h1 className="text-xl md:text-2xl font-black tracking-tighter flex flex-wrap items-center gap-x-1.5 font-lexend uppercase leading-none">
+                                        <span className="text-blue-600 dark:text-blue-400">ULAŞIM HİZMETLERİ</span>
+                                        <span className="text-slate-400 dark:text-slate-600 font-light text-lg md:text-xl">MÜDÜRLÜĞÜ</span>
+                                    </h1>
+                                    <div className="flex items-center gap-2">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">Operasyonel Analiz Sistemi</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 self-start md:self-auto">
+                                <div className="flex items-center space-x-2 bg-card text-card-foreground p-2 rounded-lg border border-border shadow-sm">
+                                    <span className="text-sm font-medium text-muted-foreground px-2">Son Güncelleme:</span>
+                                    <span className="text-sm font-bold text-foreground">{lastUpdatedDate}</span>
+                                </div>
+                                <ThemeToggle />
+                                <button
+                                    onClick={() => setIsAuthenticated(false)}
+                                    className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40 transition-colors"
+                                    title="Çıkış Yap"
+                                >
+                                    <LogOut size={20} />
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-4 self-start md:self-auto">
-                        <div className="flex items-center space-x-2 bg-card text-card-foreground p-2 rounded-lg border border-border shadow-sm">
-                            <span className="text-sm font-medium text-muted-foreground px-2">Son Güncelleme:</span>
-                            <span className="text-sm font-bold text-foreground">{lastUpdatedDate}</span>
-                        </div>
-                        <ThemeToggle />
-                        <button
-                            onClick={() => setIsAuthenticated(false)}
-                            className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40 transition-colors"
-                            title="Çıkış Yap"
-                        >
-                            <LogOut size={20} />
-                        </button>
+
+                        {/* Filter Bar */}
+                        <FilterBar
+                            filters={dashboardData.filters}
+                            selected={selectedFilters}
+                            onChange={handleFilterChange}
+                        />
                     </div>
                 </div>
 
-                {/* Filter Bar */}
-                <FilterBar
-                    filters={dashboardData.filters}
-                    selected={selectedFilters}
-                    onChange={handleFilterChange}
-                />
+                {/* Main Content Area */}
+                <div className="max-w-7xl mx-auto w-full px-4 md:px-8 py-8 space-y-8">
 
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -306,10 +350,26 @@ function App() {
                             largeLegend={true}
                         />
                     </div>
+                    {/* Heatmap Section */}
+                    <AnimatePresence mode="wait">
+                        <motion.div 
+                            className="mt-4 flex flex-col items-center"
+                            key={JSON.stringify(selectedFilters)}
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.98 }}
+                            transition={{ duration: 0.4 }}
+                        >
+                            <HeatmapChart data={dashboardData.heatmapData} total={
+                                dashboardData.heatmapData ? Object.values(dashboardData.heatmapData).reduce((sum, yearData) => sum + Object.values(yearData).reduce((s, v) => s + v, 0), 0) : 0
+                            } />
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
 
                 {/* Tables Section */}
                 <div className="grid gap-4 md:grid-cols-1">
+                    <SummaryTable data={dashboardData.summaryData} />
                     <RouteTable data={dashboardData.topRoutes} />
                 </div>
 
@@ -322,6 +382,7 @@ function App() {
                         Hazırlayan: Endüstri Yük. Mühendisi Emre ÖZEL
                     </p>
                 </footer>
+                </div>
             </motion.div>
         </div>
     );
