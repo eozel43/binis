@@ -15,7 +15,9 @@ export function SummaryTable({ data }) {
         { key: 'uni_ogrenci', label: 'ÜNİVERSİTE ÖĞRENCİ KARTI BİNİŞ' },
         { key: 'uni_ikamet', label: 'ÜNİVERSİTE ÖĞR. İKAMET KART BİNİŞ' },
         { key: 'uni_16no_all', label: '16NUMARA OGRENCİ' },
-        { key: 'aktarma', label: 'AKTARMA BİNİŞ' }
+        { key: 'aktarma', label: 'AKTARMA BİNİŞ' },
+        { key: 'abonman', label: 'ABONMAN BİNİŞ' },
+        { key: 'iade', label: 'İADE BİNİŞ' }
     ];
 
     return (

@@ -33,13 +33,14 @@ def group_and_transform_data(df):
         'ÜNİVERSİTE ÖĞR. İKAMET 16 NOLU HAT': 'sum',
         'ÜNİVERSİTE ÖĞR. İKAMET KART': 'sum',
         'Aktarma Biniş Adet': 'sum',
-        'Abonman Biniş Adet': 'sum'
+        'Abonman Biniş Adet': 'sum',
+        'İade Biniş Adet': 'sum'
     }).reset_index()
     
     grouped.columns = [
         'date', 'route', 'cluster', 'type', 
         'boardings', 'revenue', 'free', 
-        'tam', 'basin', 'lise', 'kredi', 'nfc', 'uni_ogrenci', 'uni_16no', 'uni_ikamet_16no', 'uni_ikamet_kart', 'aktarma', 'abonman'
+        'tam', 'basin', 'lise', 'kredi', 'nfc', 'uni_ogrenci', 'uni_16no', 'uni_ikamet_16no', 'uni_ikamet_kart', 'aktarma', 'abonman', 'iade'
     ]
 
     # Combine columns for existing frontend charts/KPIs

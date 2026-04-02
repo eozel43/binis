@@ -179,7 +179,8 @@ function App() {
             heatmapData[y] = {}; 
             summaryData[y] = {
                 tam: 0, basin: 0, lise: 0, kredi: 0, nfc: 0, 
-                uni_ogrenci: 0, uni_16no_all: 0, uni_ikamet: 0, aktarma: 0
+                uni_ogrenci: 0, uni_16no_all: 0, uni_ikamet: 0, aktarma: 0,
+                abonman: 0, iade: 0
             };
         });
 
@@ -197,7 +198,8 @@ function App() {
             if (!summaryData[year]) {
                 summaryData[year] = {
                     tam: 0, basin: 0, lise: 0, kredi: 0, nfc: 0, 
-                    uni_ogrenci: 0, uni_16no_all: 0, uni_ikamet: 0, aktarma: 0
+                    uni_ogrenci: 0, uni_16no_all: 0, uni_ikamet: 0, aktarma: 0,
+                    abonman: 0, iade: 0
                 };
             }
             // ... the rest of the summaryData assignments remain unchanged
@@ -210,6 +212,8 @@ function App() {
             summaryData[year].uni_16no_all += (r.uni_16no || 0) + (r.uni_ikamet_16no || 0);
             summaryData[year].uni_ikamet += r.uni_ikamet_kart || 0;
             summaryData[year].aktarma += r.aktarma || 0;
+            summaryData[year].abonman += r.abonman || 0;
+            summaryData[year].iade += r.iade || 0;
         });
 
         return {
